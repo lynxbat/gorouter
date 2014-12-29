@@ -25,6 +25,7 @@ import (
 )
 
 var configFile string
+var debugAddr string
 
 func init() {
 	flag.StringVar(&configFile, "c", "", "Configuration File")
@@ -48,10 +49,13 @@ func main() {
 		runtime.GOMAXPROCS(c.GoMaxProcs)
 	}
 
+	// If config contains a Debug Address we set on debug server
 	if c.DebugAddr != "" {
 		cf_debug_server.SetAddr(c.DebugAddr)
-		cf_debug_server.Run()
 	}
+	// CF Debug attempt to parse flag for "debugAddr" if not set above.
+	// If neither is present then it returns without starting debug server.
+	cf_debug_server.Run()
 
 	InitLoggerFromConfig(c, logCounter)
 	logger := steno.NewLogger("router.main")
